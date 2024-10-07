@@ -1,19 +1,21 @@
 package com.ifrs.DesafioCSV.controller;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.net.http.HttpClient;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
 import com.ifrs.DesafioCSV.domain.Publication;
-import com.ifrs.DesafioCSV.exception.PublicationExcepitonNotFound;
 import com.ifrs.DesafioCSV.service.PublicationService;
 import com.ifrs.DesafioCSV.util.CsvUtility;
+import com.ifrs.DesafioCSV.util.ExcelExportService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -23,6 +25,9 @@ import org.springframework.web.multipart.MultipartFile;
 public class PublicationController {
     @Autowired
     PublicationService publicationService;
+
+    @Autowired
+    private ExcelExportService excelExportService;
 
     @PostMapping("/csv/upload")
     public ResponseEntity  uploadFile(@RequestParam("file") MultipartFile file) {
@@ -40,6 +45,20 @@ public class PublicationController {
         }
         message = "Please upload an csv file!";
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(message);
+    }
+
+    @GetMapping("/export")
+    public ResponseEntity<InputStreamResource> exportPublicationsToExcel() throws IOException {
+        List<Publication> publications = publicationService.getAllPublications();
+        ByteArrayInputStream in = excelExportService.exportPublicationsToExcel(publications);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Content-Disposition", "attachment; filename=publications.xlsx");
+
+        return ResponseEntity.ok()
+                .headers(headers)
+                .contentType(MediaType.parseMediaType("application/vnd.ms-excel"))
+                .body(new InputStreamResource(in));
     }
 
 

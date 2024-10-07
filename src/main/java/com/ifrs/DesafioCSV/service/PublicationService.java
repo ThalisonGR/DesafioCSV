@@ -22,8 +22,8 @@ public class PublicationService implements IPublication {
     @Override
     public void save(MultipartFile file) {
         try {
-            List < Publication > stuList = CsvUtility.csvToStuList(file.getInputStream());
-            pRepository.saveAll(stuList);
+            List < Publication > publications = CsvUtility.csvToStuList(file.getInputStream());
+            pRepository.saveAll(publications);
             log.info("Saved successfully CSV");
         } catch (IOException ex) {
             log.error("Not save");
@@ -37,17 +37,19 @@ public class PublicationService implements IPublication {
 
     }
 
+    @Override
     public Publication findByID(Long id){
         Publication p  = pRepository.findById(id).orElseThrow(null);
         return  p;
     }
 
+    @Override
     public List<Publication> getPublicationYear(Integer year){
         List<Publication> publications = pRepository.findByP_year(year);
         return publications;
     }
 
-
-
-
+    public List<Publication> getAllPublications() {
+        return pRepository.findAll();
+    }
 }
