@@ -24,8 +24,6 @@ public class PublicationController {
     @Autowired
     PublicationService publicationService;
 
-
-
     @PostMapping("/csv/upload")
     public ResponseEntity  uploadFile(@RequestParam("file") MultipartFile file) {
         String message = "";
@@ -59,10 +57,17 @@ public class PublicationController {
         }
     }
 
-    
-
-
-
+    @GetMapping("/year")
+    public ResponseEntity<List<?>> getPublicationByYear(
+            @RequestParam(required = true) Integer year
+    ){
+        List<Publication> publications = publicationService.getPublicationYear(year);
+        if (!publications.isEmpty()) {
+            return ResponseEntity.ok(publications);
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+    }
 
     @GetMapping("/id/{id}")
     public ResponseEntity<Publication> getPublicationByID(@PathVariable Long id) {
