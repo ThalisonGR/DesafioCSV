@@ -7,5 +7,6 @@ import java.util.List;
 
 public interface IPublication {
     void save(MultipartFile file);
-    List<Publication> findAll();
+
+    List<Publication> filterByDoi(String doi);
 }
