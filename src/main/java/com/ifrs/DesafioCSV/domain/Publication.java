@@ -69,4 +69,6 @@ public class Publication {
     @Column(length = 1000)
     private String pubMedUrl;
 
+
+
 }

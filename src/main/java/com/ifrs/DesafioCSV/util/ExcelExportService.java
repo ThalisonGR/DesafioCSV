@@ -66,7 +66,6 @@ public class ExcelExportService {
                 row.createCell(15).setCellValue(publication.getDoiUrl());
                 row.createCell(16).setCellValue(publication.getPubMedUrl());
             }
-            // Escrever os dados para o ByteArrayOutputStream
             workbook.write(out);
             return new ByteArrayInputStream(out.toByteArray());
         }
