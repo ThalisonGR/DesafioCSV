@@ -10,4 +10,5 @@ public interface IPublication {
     Publication findByID(Long id);
     List<Publication> filterByDoi(String doi);
     List<Publication> getPublicationYear(Integer year);
+
 }

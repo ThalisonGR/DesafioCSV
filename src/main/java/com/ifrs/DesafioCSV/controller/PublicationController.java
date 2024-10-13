@@ -27,6 +27,7 @@ import org.springframework.web.multipart.MultipartFile;
 @RestController
 @RequestMapping("/api")
 public class PublicationController {
+
     @Autowired
     PublicationService publicationService;
 
@@ -64,8 +65,6 @@ public class PublicationController {
                 .body(new InputStreamResource(in));
     }
 
-
-
     @GetMapping(path = "/doi")
     public ResponseEntity<CollectionModel<EntityModel<Publication>>> getPublicationsByDoi(
             @RequestParam(required = true) String doi
@@ -74,9 +73,9 @@ public class PublicationController {
 
         /* Converta cada publicação para um EntityModel e adicione links HATEOAS
             Adiciona um link para a própria publicação
+            Converte publicatuin para um EntityModel e adicione links HATEOAS
          */
         if (!publications.isEmpty()) {
-            // Converta cada publicação para um EntityModel e adicione links HATEOAS
             List<EntityModel<Publication>> publicationModels = publications.stream()
                     .map(publication -> EntityModel.of(publication,
                             linkTo(methodOn(PublicationController.class).getPublicationByID(publication.getId())).withSelfRel(),
@@ -92,15 +91,25 @@ public class PublicationController {
     }
 
     @GetMapping("/year")
-    public ResponseEntity<List<?>> getPublicationByYear(
+    public ResponseEntity<CollectionModel<EntityModel<Publication>>> getPublicationByYear(
             @RequestParam(required = true) Integer year
     ){
         List<Publication> publications = publicationService.getPublicationYear(year);
+
         if (!publications.isEmpty()) {
-            return ResponseEntity.ok(publications);
+            List<EntityModel<Publication>> publicationModels = publications.stream()
+                    .map(publication -> EntityModel.of(publication,
+                            linkTo(methodOn(PublicationController.class).getPublicationByID(publication.getId())).withSelfRel(),
+                            linkTo(methodOn(PublicationController.class).getAllPublication()).withRel("all-publications")))
+                    .collect(Collectors.toList());
+            return ResponseEntity.ok(
+                    CollectionModel.of(publicationModels,
+                            linkTo(methodOn(PublicationController.class).getPublicationByYear(year)).withSelfRel())
+            );
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
+
     }
 
     @GetMapping("/id/{id}")
@@ -114,4 +123,5 @@ public class PublicationController {
        List<Publication> listPublication= publicationService.getAllPublications();
         return ResponseEntity.ok().body(listPublication);
     }
+
 }

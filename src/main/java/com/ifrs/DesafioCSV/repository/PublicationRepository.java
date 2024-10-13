@@ -13,11 +13,11 @@ import java.util.Optional;
 
 @Repository
 public interface PublicationRepository extends JpaRepository<Publication , Long> {
-
     @Query(value = "SELECT * FROM publication p WHERE p.doi = :doi", nativeQuery = true)
     List<Publication> searchByDoi(@Param("doi") String doi);
 
     @Query(value = "SELECT * FROM Publication p WHERE p.p_year = :year", nativeQuery = true)
     List<Publication> findByP_year(@Param("year") int year);
+
 
 }

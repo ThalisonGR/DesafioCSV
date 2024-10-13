@@ -30,6 +30,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 public class PublicationControllerTest {
@@ -64,7 +65,6 @@ public class PublicationControllerTest {
 
     @Test
     public void testUploadFile() throws Exception {
-        // Mock MultipartFile
         MockMultipartFile mockFile = new MockMultipartFile(
                 "file", "publications.csv", "text/csv", "data".getBytes());
 
@@ -83,7 +83,9 @@ public class PublicationControllerTest {
         when(publicationService.filterByDoi("10.1234/abcde1")).thenReturn(mockPublications);
 
         mockMvc.perform(get("/api/doi").param("doi", "10.1234/abcde1"))
-                .andExpect(status().isOk());
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.content[0].title").value("Title 1"));
+
         verify(publicationService, times(1)).filterByDoi("10.1234/abcde1");
     }
 
@@ -93,7 +95,8 @@ public class PublicationControllerTest {
 
         mockMvc.perform(get("/api/year").param("year", "2023"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].title").value("Title 1"));
+                .andDo(print())
+                .andExpect(jsonPath("$.content[0].title").value("Title 1"));
 
         verify(publicationService, times(1)).getPublicationYear(2023);
     }

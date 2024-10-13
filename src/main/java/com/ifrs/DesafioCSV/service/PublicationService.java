@@ -58,6 +58,7 @@ public class PublicationService implements IPublication {
         }
     }
 
+
     public List<Publication> getAllPublications() {
         try {
             return pRepository.findAll();
