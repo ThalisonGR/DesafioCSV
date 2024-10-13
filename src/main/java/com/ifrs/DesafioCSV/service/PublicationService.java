@@ -1,6 +1,8 @@
 package com.ifrs.DesafioCSV.service;
 
+import ch.qos.logback.core.encoder.EchoEncoder;
 import com.ifrs.DesafioCSV.domain.Publication;
+import com.ifrs.DesafioCSV.exception.PublicationExcepitonNotFound;
 import com.ifrs.DesafioCSV.repository.PublicationRepository;
 import com.ifrs.DesafioCSV.util.CsvUtility;
 import lombok.extern.slf4j.Slf4j;
@@ -33,8 +35,11 @@ public class PublicationService implements IPublication {
 
     @Override
     public List<Publication> filterByDoi(String doi) {
-       return pRepository.searchByDoi(doi);
-
+        try {
+            return pRepository.searchByDoi(doi);
+        }catch (Exception e){
+            throw new PublicationExcepitonNotFound();
+        }
     }
 
     @Override
@@ -45,11 +50,20 @@ public class PublicationService implements IPublication {
 
     @Override
     public List<Publication> getPublicationYear(Integer year){
-        List<Publication> publications = pRepository.findByP_year(year);
-        return publications;
+        try {
+            List<Publication> publications = pRepository.findByP_year(year);
+            return publications;
+        }catch (Exception e){
+            throw new PublicationExcepitonNotFound();
+        }
     }
 
     public List<Publication> getAllPublications() {
-        return pRepository.findAll();
+        try {
+            return pRepository.findAll();
+        }catch (Exception e){
+            throw new PublicationExcepitonNotFound();
+        }
     }
+
 }

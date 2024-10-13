@@ -1,11 +1,14 @@
-package com.ifrs.DesafioCSV.exception.Response;
+package com.ifrs.DesafioCSV.exception;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.springframework.http.HttpStatus;
 
+
+
 import java.time.LocalDateTime;
+
 
 @Data
 @AllArgsConstructor

@@ -1,11 +1,13 @@
 package com.ifrs.DesafioCSV.controller;
 
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
+
+
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.net.http.HttpClient;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.stream.Collectors;
 
 import com.ifrs.DesafioCSV.domain.Publication;
 import com.ifrs.DesafioCSV.service.PublicationService;
@@ -13,6 +15,8 @@ import com.ifrs.DesafioCSV.util.CsvUtility;
 import com.ifrs.DesafioCSV.util.ExcelExportService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
+import org.springframework.hateoas.CollectionModel;
+import org.springframework.hateoas.EntityModel;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -36,7 +40,6 @@ public class PublicationController {
             try {
                 publicationService.save(file);
                 message = "The file is uploaded successfully: " + file.getOriginalFilename();
-//                HttpClient client = HttpClient.newBuilder().;
                 return ResponseEntity.status(HttpStatus.OK).body(message);
             } catch (Exception e) {
                 message = "The file is not upload successfully: " + file.getOriginalFilename() + "!";
@@ -64,13 +67,25 @@ public class PublicationController {
 
 
     @GetMapping(path = "/doi")
-    public ResponseEntity<List<Publication>> getPublicationsByDoi(
-            @RequestParam(required = true) String doi  // Recebe uma lista de DOIs
+    public ResponseEntity<CollectionModel<EntityModel<Publication>>> getPublicationsByDoi(
+            @RequestParam(required = true) String doi
     ) {
         List<Publication> publications = publicationService.filterByDoi(doi);
 
+        /* Converta cada publicação para um EntityModel e adicione links HATEOAS
+            Adiciona um link para a própria publicação
+         */
         if (!publications.isEmpty()) {
-            return ResponseEntity.ok(publications);
+            // Converta cada publicação para um EntityModel e adicione links HATEOAS
+            List<EntityModel<Publication>> publicationModels = publications.stream()
+                    .map(publication -> EntityModel.of(publication,
+                            linkTo(methodOn(PublicationController.class).getPublicationByID(publication.getId())).withSelfRel(),
+                            linkTo(methodOn(PublicationController.class).getAllPublication()).withRel("all-publications")))
+                    .collect(Collectors.toList());
+            return ResponseEntity.ok(
+                    CollectionModel.of(publicationModels,
+                            linkTo(methodOn(PublicationController.class).getPublicationsByDoi(doi)).withSelfRel())
+            );
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
@@ -92,5 +107,11 @@ public class PublicationController {
     public ResponseEntity<Publication> getPublicationByID(@PathVariable Long id) {
         Publication p = publicationService.findByID(id);
         return ResponseEntity.ok().body(p);
+    }
+
+    @GetMapping("/list-all-publication")
+    public ResponseEntity<List<Publication>> getAllPublication() {
+       List<Publication> listPublication= publicationService.getAllPublications();
+        return ResponseEntity.ok().body(listPublication);
     }
 }
