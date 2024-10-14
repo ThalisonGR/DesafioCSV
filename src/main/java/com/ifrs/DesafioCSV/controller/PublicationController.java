@@ -132,7 +132,7 @@ public class PublicationController {
 
     @Operation(
             summary = "Retorna uma lista",
-            description  = "salva o arquivo")
+            description  = "Retorna uma lista com o ano informado")
     @ApiResponse(
             responseCode = "200",
             description = "Operção realizada com sucesso")
@@ -163,20 +163,29 @@ public class PublicationController {
 
 
     @Operation(
-            summary = "Salva o arquivo CSV",
-            description  = "salva o arquivo")
+            summary = "Retorna o objeto com ID informado",
+            description  = "Retorna o objeto com o determinado ID informado")
     @ApiResponse(
             responseCode = "200",
             description = "Operção realizada com sucesso")
     @ApiResponse(
             responseCode = "404",
-            description = " Problema ao exportar xls")
+            description = " Problema retornar o ID")
     @GetMapping("/id/{id}")
     public ResponseEntity<Publication> getPublicationByID(@PathVariable Long id) {
         Publication p = publicationService.findByID(id);
         return ResponseEntity.ok().body(p);
     }
 
+    @Operation(
+            summary = "Retorna a lista de todas as publicações",
+            description  = "Retorna todas as prublicações")
+    @ApiResponse(
+            responseCode = "200",
+            description = "Operção realizada com sucesso")
+    @ApiResponse(
+            responseCode = "404",
+            description = " Problema ao retornar as publicações")
     @GetMapping("/list-all-publication")
     public ResponseEntity<List<Publication>> getAllPublication() {
        List<Publication> listPublication= publicationService.getAllPublications();
