@@ -13,6 +13,9 @@ import com.ifrs.DesafioCSV.domain.Publication;
 import com.ifrs.DesafioCSV.service.PublicationService;
 import com.ifrs.DesafioCSV.util.CsvUtility;
 import com.ifrs.DesafioCSV.util.ExcelExportService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.hateoas.CollectionModel;
@@ -26,6 +29,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/api")
+@Tag(
+        name = "Publicações API",
+        description = "Endpoints das publicações")
 public class PublicationController {
 
     @Autowired
@@ -34,6 +40,16 @@ public class PublicationController {
     @Autowired
     private ExcelExportService excelExportService;
 
+
+    @Operation(
+            summary = "Salva o arquivo CSV",
+            description  = "salva o arquivo")
+    @ApiResponse(
+            responseCode = "200",
+            description = "Operção realizada com sucesso")
+    @ApiResponse(
+            responseCode = "417",
+            description = " Não pôde ser atendida a solicitação")
     @PostMapping("/csv/upload")
     public ResponseEntity  uploadFile(@RequestParam("file") MultipartFile file) {
         String message = "";
@@ -51,26 +67,49 @@ public class PublicationController {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(message);
     }
 
+
+    @Operation(
+            summary = "Exportar os dados em Excel",
+            description  = "Exportar os dados em excel, pois gera e disponibiliza para dowloand")
+    @ApiResponse(
+            responseCode = "200",
+            description = "Operção realizada com sucesso")
+    @ApiResponse(
+            responseCode = "404",
+            description = " Problema ao exportar xls")
     @GetMapping("/export")
     public ResponseEntity<InputStreamResource> exportPublicationsToExcel() throws IOException {
-        List<Publication> publications = publicationService.getAllPublications();
-        ByteArrayInputStream in = excelExportService.exportPublicationsToExcel(publications);
+       try {
+           List<Publication> publications = publicationService.getAllPublications();
+           ByteArrayInputStream in = excelExportService.exportPublicationsToExcel(publications);
 
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("Content-Disposition", "attachment; filename=publications.xlsx");
+           HttpHeaders headers = new HttpHeaders();
+           headers.add("Content-Disposition", "attachment; filename=publications.xlsx");
 
-        return ResponseEntity.ok()
-                .headers(headers)
-                .contentType(MediaType.parseMediaType("application/vnd.ms-excel"))
-                .body(new InputStreamResource(in));
+           return ResponseEntity.ok()
+                   .headers(headers)
+                   .contentType(MediaType.parseMediaType("application/vnd.ms-excel"))
+                   .body(new InputStreamResource(in));
+       }catch (Exception e){
+           return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+       }
     }
 
+
+    @Operation(
+            summary = "Retorna filtrando DOI",
+            description  = "Retorna o objeto em json de acordo com o parametro passado no DOI")
+    @ApiResponse(
+            responseCode = "200",
+            description = "Operção realizada com sucesso")
+    @ApiResponse(
+            responseCode = "404",
+            description = " Problema ao retornar o DOI")
     @GetMapping(path = "/doi")
     public ResponseEntity<CollectionModel<EntityModel<Publication>>> getPublicationsByDoi(
             @RequestParam(required = true) String doi
     ) {
         List<Publication> publications = publicationService.filterByDoi(doi);
-
         /* Converta cada publicação para um EntityModel e adicione links HATEOAS
             Adiciona um link para a própria publicação
             Converte publicatuin para um EntityModel e adicione links HATEOAS
@@ -90,6 +129,16 @@ public class PublicationController {
         }
     }
 
+
+    @Operation(
+            summary = "Retorna uma lista",
+            description  = "salva o arquivo")
+    @ApiResponse(
+            responseCode = "200",
+            description = "Operção realizada com sucesso")
+    @ApiResponse(
+            responseCode = "404",
+            description = " Problema ao retornar a lista do ano informado")
     @GetMapping("/year")
     public ResponseEntity<CollectionModel<EntityModel<Publication>>> getPublicationByYear(
             @RequestParam(required = true) Integer year
@@ -112,6 +161,16 @@ public class PublicationController {
 
     }
 
+
+    @Operation(
+            summary = "Salva o arquivo CSV",
+            description  = "salva o arquivo")
+    @ApiResponse(
+            responseCode = "200",
+            description = "Operção realizada com sucesso")
+    @ApiResponse(
+            responseCode = "404",
+            description = " Problema ao exportar xls")
     @GetMapping("/id/{id}")
     public ResponseEntity<Publication> getPublicationByID(@PathVariable Long id) {
         Publication p = publicationService.findByID(id);

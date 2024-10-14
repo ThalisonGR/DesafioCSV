@@ -71,7 +71,7 @@ public class PublicationControllerTest {
         doNothing().when(publicationService).save(any(MultipartFile.class));
 
         mockMvc.perform(multipart("/api/csv/upload")
-                        .file(mockFile))
+                .file(mockFile))
                 .andExpect(status().isOk())
                 .andExpect(content().string("The file is uploaded successfully: publications.csv"));
 
@@ -85,7 +85,6 @@ public class PublicationControllerTest {
         mockMvc.perform(get("/api/doi").param("doi", "10.1234/abcde1"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content[0].title").value("Title 1"));
-
         verify(publicationService, times(1)).filterByDoi("10.1234/abcde1");
     }
 
@@ -97,7 +96,6 @@ public class PublicationControllerTest {
                 .andExpect(status().isOk())
                 .andDo(print())
                 .andExpect(jsonPath("$.content[0].title").value("Title 1"));
-
         verify(publicationService, times(1)).getPublicationYear(2023);
     }
 
@@ -108,11 +106,9 @@ public class PublicationControllerTest {
         mockMvc.perform(get("/api/id/1"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.title").value("Title 1"));
-
         verify(publicationService, times(1)).findByID(1L);
     }
 
-    // Teste para exportar publicações em Excel
     @Test
     public void testExportPublicationsToExcel() throws Exception {
         when(publicationService.getAllPublications()).thenReturn(mockPublications);
