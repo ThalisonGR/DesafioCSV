@@ -11,8 +11,8 @@ Link para acessar: http://localhost:8080/swagger-ui/index.html#/
 ![image](https://github.com/user-attachments/assets/38bf2077-36d1-426d-85cb-9b24d157fd9f)
 
 #Requisições via postman:
-Baixe o arquivo e realize a importação no POSTMAN.
-[Uploading Endpoints - Desafio CSV.postman_collection.json…]()
+Baixe o arquivo e realize a importação no POSTMAN acesse o drive para baixar o arquivo.
+https://drive.google.com/drive/u/0/folders/1JKf0g3Z2KbwVlf4yhnWXMu8Wjv-eZ_eL
 ![Endpoints - CSV](https://github.com/user-attachments/assets/5737d8ac-de51-42c7-aaf5-7709d1c8848c)
 
 Post CSV:
