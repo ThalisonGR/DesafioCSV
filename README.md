@@ -1,4 +1,4 @@
-[Endpoints - Desafio CSV.postman_collection.json](https://github.com/user-attachments/files/17357902/Endpoints.-.Desafio.CSV.postman_collection.json)# Desafio CSV - SPRINGBOOT | APACHE POI | H2
+# Desafio CSV - SPRINGBOOT | APACHE POI | H2
 Está aplicação foi criado os endpoints de acordo com os requisitos informados:
 Será necessário realizar algumas requisições via POSTMAN (https://www.postman.com/downloads/).
 
