@@ -12,7 +12,7 @@ Link para acessar: http://localhost:8080/swagger-ui/index.html#/
 
 #Requisições via postman:
 Baixe o arquivo e realize a importação no POSTMAN acesse o drive para baixar o arquivo.
-https://drive.google.com/drive/u/0/folders/1JKf0g3Z2KbwVlf4yhnWXMu8Wjv-eZ_eL
+https://drive.google.com/drive/folders/1JKf0g3Z2KbwVlf4yhnWXMu8Wjv-eZ_eL?usp=drive_link
 ![Endpoints - CSV](https://github.com/user-attachments/assets/5737d8ac-de51-42c7-aaf5-7709d1c8848c)
 
 Post CSV:
